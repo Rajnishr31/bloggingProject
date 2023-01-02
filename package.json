@@ -1,0 +1,25 @@
+{
+  "name": "bloggingproject",
+  "version": "1.0.0",
+  "description": "frist project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rajnishr31/bloggingProject.git"
+  },
+  "author": "shyam , rajnish",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rajnishr31/bloggingProject/issues"
+  },
+  "homepage": "https://github.com/Rajnishr31/bloggingProject#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "moment": "^2.29.4",
+    "mongoose": "^6.8.2",
+    "nodemon": "^2.0.20"
+  }
+}
