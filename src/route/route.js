@@ -6,8 +6,10 @@ const blogController = require('../controller/blogController')
 
 route.post('/authors' ,authorController.authorCreate)
 route.post('/blogs' ,blogController.createBlog)
+route.get('/blogs', blogController.getBlogs)
+route.put('/blogs/:blogId' ,blogController.putApi)
+ route.delete('/blogs/:blogId',blogController.deleted)
 
-
-
+ 
 
 module.exports = route
