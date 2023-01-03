@@ -4,9 +4,10 @@ const mongoose= require('mongoose')
 
 exports.createBlog = async (req,res)=>{
   try{
+    
   let {title , body, authorId , tags , category , subcategory } = req.body
   const authorValid = await authorModel.findById({_id : authorId})
-  console.log(authorValid)
+  c
   if(!authorValid )return res.status(404).send({status :false  , message : "author id is not existing"})
  req.body.publishedAt= new Date() 
   const create = await blogModel.create(req.body)
@@ -70,7 +71,7 @@ try{
   data.isDeleted = false
   let updateData = await blogModel.updateMany(find , {isDeleted : true},{new : true})
   res.status(200).send({status : true , data : updateData})
-  
+
 }catch(err){
   res.status(500).send({status :false , message : err.message})
 }
