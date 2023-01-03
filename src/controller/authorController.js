@@ -16,6 +16,7 @@ exports.authorCreate = async (req ,res)=>{
 
 exports.logIn = async (req ,res) =>{
 try{
+  
   let { email ,password}  =  req.body
   if(!email)return res.status(400).send({status : false , message :"email is required"})
   if(!password)return res.status(400).send({status : false , message :"password is required"})

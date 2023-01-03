@@ -11,6 +11,7 @@ exports.createBlog = async (req,res)=>{
  req.body.publishedAt= new Date() 
   const create = await blogModel.create(req.body)
 res.status(201).send({status : true , data :create })
+
 }catch(err){
   res.status(500).send({status :false , message : err.message})
 }
@@ -48,25 +49,28 @@ res.status(201).send({status:true ,data :updateData})
 
 exports.deleted = async (req, res) => {
 try{
+
   let Id = req.params.blogId
   console.log(Id);
   let data = await blogModel.findOneAndUpdate({ _id: Id, isDeleted: false }, { isDeleted:true },{new : true})
   if(!data) return res.status(404).send({status:false , message : "blogId is not found  "})
-  res.status(200).send({msg:data})
+  res.status(200).send({status :true , data :data})
+
 }catch(err){
   res.status(500).send({status :false , message : err.message})
 }
-
 }
 
 
 
 exports.deletedByQuery = async (req ,res)=>{
 try{
+
   let data  =  req.query
   data.isDeleted = false
   let updateData = await blogModel.updateMany(find , {isDeleted : true},{new : true})
   res.status(200).send({status : true , data : updateData})
+  
 }catch(err){
   res.status(500).send({status :false , message : err.message})
 }
