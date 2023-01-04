@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 
 let nameRegex = /^[A-Za-z ]{3,30}$/
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-let Regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@#$!%*?&]{8,}$/
+let Regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@#$!%*?&]{8,13}$/
 
 exports.authorCreate = async (req ,res)=>{
   try{
@@ -58,11 +58,12 @@ try{
   let checkDetails = await authorModel.findOne({email :email})
   if(!checkDetails)return res.status(400).send({status : false , message : " email and password invalid"})
 
-     bcrypt.compare(password, checkDetails.password,(err ,result) =>{
+    bcrypt.compare(password, checkDetails.password,(err ,result) =>{
       if (err) return res.status(404).send({status : false , message : err.message})
-      if(result !== true)return res.status(404).send({status : false , message : "password is wrong"})
+      if(result == false)return res.status(404).send({status : false , message : "password is wrong"})
     })
-  
+
+    
    const token = jwt.sign({authorId :checkDetails._id } ,"first project " , {expiresIn :'1h'})
    res.status(201).send({status :true ,token :token  })
 

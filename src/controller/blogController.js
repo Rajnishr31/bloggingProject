@@ -83,7 +83,8 @@ exports.deleted = async (req, res) => {
   try {
 
     let Id = req.params.blogId
-    console.log(Id);
+
+  if(!ObjectId.isValid(Id))return res.status(400).send({ status: false, message: " invalid blogid" })
     let data = await blogModel.findOneAndUpdate({ _id: Id, isDeleted: false }, { isDeleted: true }, { new: true })
     if (!data) return res.status(404).send({ status: false, message: "blogId is not found  " })
     res.status(200).send({ status: true, data: data })
@@ -101,6 +102,7 @@ exports.deletedByQuery = async (req, res) => {
     let data = req.query
     data.isDeleted = false
     let updateData = await blogModel.updateMany(find, { isDeleted: true }, { new: true })
+    if(!updateData)return res.status(404).send({ status: false, message: "not match query " })
     res.status(200).send({ status: true, data: updateData })
 
   } catch (err) {
