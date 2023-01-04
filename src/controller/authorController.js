@@ -1,16 +1,19 @@
 const authorModel = require('../model/authorModel')
 const mongoose = require('mongoose')
-const blogModel = require('../model/blogModel')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt');
 
-let nameRegex = /^[A-Za-z ]{3,10}$/
+
+let nameRegex = /^[A-Za-z ]{3,30}$/
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-let passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8, 10}$/
+let Regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@#$!%*?&]{8,}$/
 
 exports.authorCreate = async (req ,res)=>{
   try{
+
   let data  = req.body
   const{fname ,lname ,title , email , password} = data
-
+if(Object.keys(req.body).length == 0 )return res.status(400).send({status : false , message : "body empty"})
 
   if(!fname)return res.status(400).send({status : false , message : "require fname"})
   if(!lname)return res.status(400).send({status : false , message : "require lname"})
@@ -23,12 +26,18 @@ exports.authorCreate = async (req ,res)=>{
   if(!fname.match(nameRegex))return res.status(400).send({status : false , message : "provide valid fname"})
   if(!lname.match(nameRegex))return res.status(400).send({status : false , message : "provide valid lname"})
   if(!email.match(emailRegex))return res.status(400).send({status : false , message : "provide valid email "})
-  // if(!password.match(passwordRegex))return res.status(400).send({status : false , message : "provide valid password"})
+   if(!password.match(Regex))return res.status(400).send({status : false , message : "provide valid password"})
 
   let uniqueEmail = await authorModel.findOne({email : email})
   if(uniqueEmail)return res.status(400).send({status : false , message : " email already exist"})
 
-  const createAuthor = await authorModel.create(data)
+   let hashing =  await bcrypt.hash(password, 10)
+
+   obj= { fname :fname,lname :lname , title :title , email : email , password : hashing}
+
+  console.log(obj)
+
+  const createAuthor = await authorModel.create(obj)
   res.status(201).send({status :true, data : createAuthor })
 
 }catch(err){
@@ -41,11 +50,19 @@ exports.logIn = async (req ,res) =>{
 try{
 
   let { email ,password}  =  req.body
+  if(Object.keys(req.body).length == 0 )return res.status(400).send({status : false , message : "body empty"})
+
   if(!email)return res.status(400).send({status : false , message :"email is required"})
   if(!password)return res.status(400).send({status : false , message :"password is required"})
 
-  let checkDetails = await blogModel.findOne(req.body)
+  let checkDetails = await authorModel.findOne({email :email})
   if(!checkDetails)return res.status(400).send({status : false , message : " email and password invalid"})
+
+     bcrypt.compare(password, checkDetails.password,(err ,result) =>{
+      if (err) return res.status(404).send({status : false , message : err.message})
+      if(result !== true)return res.status(404).send({status : false , message : "password is wrong"})
+    })
+  
    const token = jwt.sign({authorId :checkDetails._id } ,"first project " , {expiresIn :'1h'})
    res.status(201).send({status :true ,token :token  })
 
@@ -53,3 +70,4 @@ try{
    res.status(500).send({status :false , message : err.message})
 }
 }
+

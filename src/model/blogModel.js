@@ -1,12 +1,12 @@
 const mongoose= require('mongoose')
 
 const blogSchema = new mongoose.Schema({
- title: {type: String , required :true},
-  body: {type: String , required :true},
- authorId: {type : mongoose.Schema.Types.ObjectId , ref : 'Author',required : true},
-  tags: [{type :String}],
-  category: {type: String , required :true},
-   subcategory:[{type :String , required : true}] ,
+ title: {type: String , required :true, trim : true},
+  body: {type: String , required :true, trim : true},
+ authorId: {type : mongoose.Schema.Types.ObjectId , ref : 'Author',required : true, trim : true},
+  tags: [{type :String, trim : true}],
+  category: {type: String , required :true, trim : true},
+   subcategory:[{type :String , required : true, trim : true}] ,
 
 deletedAt: Date,
  isDeleted: {type :Boolean, default: false}, 
