@@ -11,5 +11,8 @@ route.put('/blogs/:blogId' ,blogController.putApi)
  route.delete('/blogs/:blogId',blogController.deleted)
 
  
-
+  route.all('*/',(req, res )=>{
+    res.status(400).send({status : false , message : 'invalid path'})
+     })
+   
 module.exports = route
