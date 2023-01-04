@@ -2,7 +2,7 @@ const blogModel = require('../model/blogModel')
 const authorModel = require('../model/authorModel')
 const mongoose = require('mongoose')
  let ObjectId = mongoose.Types.ObjectId
- let Regex = /^[A-Za-z- ]{3,30}$/
+ let Regex = /^[A-Za-z- ]{1,30}$/
 
 
 
@@ -14,18 +14,20 @@ exports.createBlog = async (req, res) => {
     if (!body) return res.status(400).send({ status: false, message: "require body" })
     if (!authorId) return res.status(400).send({ status: false, message: "require authorId" })
     if (!category) return res.status(400).send({ status: false, message: "require category" })
-    if (!subcategory) return res.status(400).send({ status: false, message: "require subcategory" })
 
 if(!ObjectId.isValid(authorId))return res.status(400).send({ status: false, message: " invalid objectId" })
 if(!title.match(Regex))return res.status(400).send({status : false , message : "provide valid title"})
 if(!body.match(Regex))return res.status(400).send({status : false , message : "provide valid body"})
-if(!Regex.test(...tags))return res.status(400).send({status : false , message : "provide valid tags"})
 if(!category.match(Regex))return res.status(400).send({status : false , message : "provide valid category"})
-if(!Regex.test(...subcategory))return res.status(400).send({status : false , message : "provide valid subcategory"})
 
+
+if(tags){
+if(!Regex.test(...tags))return res.status(400).send({status : false , message : "provide valid tags"})}
+
+if(subcategory){
+if(!Regex.test(...subcategory))return res.status(400).send({status : false , message : "provide valid subcategory"})}
 
     const authorValid = await authorModel.findById({ _id: authorId })
-
     if (!authorValid) return res.status(404).send({ status: false, message: "author id is not existing" })
     req.body.publishedAt = new Date()
     const create = await blogModel.create(req.body)
@@ -58,11 +60,17 @@ exports.putApi = async (req, res) => {
     let id = req.params.blogId
     if(!ObjectId.isValid(id))return res.status(400).send({ status: false, message: " invalid objectId" })
 
-    if(!title.match(Regex))return res.status(400).send({status : false , message : "provide valid title"})
-    if(!body.match(Regex))return res.status(400).send({status : false , message : "provide valid body"})
-    if(!Regex.test(...tags))return res.status(400).send({status : false , message : "provide valid tags"})
-    if(!Regex.test(...subcategory))return res.status(400).send({status : false , message : "provide valid subcategory"})
+    if(title){
+    if(!title.match(Regex))return res.status(400).send({status : false , message : "provide valid title"})}
+
+    if(body){
+    if(!body.match(Regex))return res.status(400).send({status : false , message : "provide valid body"})}
+    if(tags){
+    if(!Regex.test(...tags))return res.status(400).send({status : false , message : "provide valid tags"})}
+   if(subcategory){
+    if(!Regex.test(...subcategory))return res.status(400).send({status : false , message : "provide valid subcategory"})}
     
+
     let blogId = await blogModel.findOne({ _id: id }, { isDeleted: true })
     if (!blogId) return res.status(404).send({ status: false, message: "blogId is not exist" })
 
@@ -100,8 +108,8 @@ exports.deletedByQuery = async (req, res) => {
   try {
 
     let data = req.query
-    data.isDeleted = false
-    let updateData = await blogModel.updateMany(find, { isDeleted: true }, { new: true })
+  
+    let updateData = await blogModel.updateMany(data, { isDeleted: true }, { new: true })
     if(!updateData)return res.status(404).send({ status: false, message: "not match query " })
     res.status(200).send({ status: true, data: updateData })
 

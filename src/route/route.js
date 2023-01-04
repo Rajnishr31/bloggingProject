@@ -11,7 +11,11 @@ route.post('/blogs' ,middleware.auth1, middleware.auth2, blogController.createBl
 route.get('/blogs', middleware.auth1, blogController.getBlogs)
 route.put('/blogs/:blogId' ,middleware.auth1, middleware.auth2, blogController.putApi)
 route.delete('/blogs/:blogId',middleware.auth1, middleware.auth2, blogController.deleted)
-route.delete('/blogs',blogController.deletedByQuery)
+route.delete('/blogs',middleware.auth1,blogController.deletedByQuery)
  
+
+route.all('*/',(req ,res)=>{
+  res.status(400).send({status: false , message :" path invalid"})
+})
 
 module.exports = route

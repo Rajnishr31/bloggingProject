@@ -6,7 +6,7 @@ const blogModel = require('../model/blogModel')
 exports.auth1 = (req ,res,next)=>{
   try{
 
- let token  = req.headers['x-auth-key']
+ let token  = req.headers['x-api-key']
  if(!token)return res.status(400).send({status:false , message : "provide  a token" })
 
   jwt.verify(token , "first project " ,(err ,decoded)=>{

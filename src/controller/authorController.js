@@ -31,13 +31,7 @@ if(Object.keys(req.body).length == 0 )return res.status(400).send({status : fals
   let uniqueEmail = await authorModel.findOne({email : email})
   if(uniqueEmail)return res.status(400).send({status : false , message : " email already exist"})
 
-   let hashing =  await bcrypt.hash(password, 10)
-
-   obj= { fname :fname,lname :lname , title :title , email : email , password : hashing}
-
-  console.log(obj)
-
-  const createAuthor = await authorModel.create(obj)
+  const createAuthor = await authorModel.create(data)
   res.status(201).send({status :true, data : createAuthor })
 
 }catch(err){
@@ -55,15 +49,9 @@ try{
   if(!email)return res.status(400).send({status : false , message :"email is required"})
   if(!password)return res.status(400).send({status : false , message :"password is required"})
 
-  let checkDetails = await authorModel.findOne({email :email})
+  let checkDetails = await authorModel.findOne({email :email ,password : password})
   if(!checkDetails)return res.status(400).send({status : false , message : " email and password invalid"})
 
-    bcrypt.compare(password, checkDetails.password,(err ,result) =>{
-      if (err) return res.status(404).send({status : false , message : err.message})
-      if(result == false)return res.status(404).send({status : false , message : "password is wrong"})
-    })
-
-    
    const token = jwt.sign({authorId :checkDetails._id } ,"first project " , {expiresIn :'1h'})
    res.status(201).send({status :true ,token :token  })
 
