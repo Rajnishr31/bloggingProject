@@ -8,6 +8,7 @@ const mongoose = require('mongoose')
 
 exports.createBlog = async (req, res) => {
   try {
+    
     let { title, body, authorId, tags, category, subcategory } = req.body
     if (Object.keys(req.body).length == 0) return res.status(400).send({ status: false, message: "please provide key in request body" })
     if (!title) return res.status(400).send({ status: false, message: "require title" })
@@ -27,12 +28,15 @@ if(!Regex.test(...tags))return res.status(400).send({status : false , message : 
 if(subcategory){
 if(!Regex.test(...subcategory))return res.status(400).send({status : false , message : "provide valid subcategory"})}
 
-    const authorValid = await authorModel.findById({ _id: authorId })
-    if (!authorValid) return res.status(404).send({ status: false, message: "author id is not existing" })
-    req.body.publishedAt = new Date()
-    const create = await blogModel.create(req.body)
-    res.status(201).send({ status: true, data: create })
+const authorValid = await authorModel.findById({ _id: authorId })
+if(!authorValid) return res.status(404).send({ status: false, message: "author id is not existing" })
+   req.body.publishedAt = new Date()
 
+    blogModel.create(req.body,(err , data)=>{
+      if(err)return res.send({msg: err.message})
+      res.status(201).send({ status: true, data: data})
+     })
+  
   } catch (err) {
     res.status(500).send({ status: false, message: err.message })
   }
@@ -44,9 +48,10 @@ exports.getBlogs = async (req, res) => {
     let data = req.query
     data.isDeleted = false
     data.isPublished = true
-    let findData = await blogModel.find(data)
+    let findData = await blogModel.find(data )
     if(findData.length==0)return res.status(404).send({status : false , message : " data not found"})
     res.status(200).send({ status: true, data: findData })
+
   } catch (err) {
     res.status(500).send({ status: false, message: err.message })
   }
@@ -92,8 +97,8 @@ exports.deleted = async (req, res) => {
 
     let Id = req.params.blogId
 
-  if(!ObjectId.isValid(Id))return res.status(400).send({ status: false, message: " invalid blogid" })
-    let data = await blogModel.findOneAndUpdate({ _id: Id, isDeleted: false }, { isDeleted: true }, { new: true })
+  if(!ObjectId.isValid(Id))return res.status(400).send({ status: false, message: " invalid blogId" })
+    let data = await blogModel.findOneAndUpdate({ _id: Id, isDeleted: false }, { isDeleted: true ,deletedAt :new Date()}, { new: true })
     if (!data) return res.status(404).send({ status: false, message: "blogId is not found  " })
     res.status(200).send({ status: true, data: data })
 
@@ -109,7 +114,7 @@ exports.deletedByQuery = async (req, res) => {
 
     let data = req.query
   
-    let updateData = await blogModel.updateMany(data, { isDeleted: true }, { new: true })
+    let updateData = await blogModel.updateMany(data, { isDeleted: true ,deletedAt :new Date()}, { new: true })
     if(!updateData)return res.status(404).send({ status: false, message: "not match query " })
     res.status(200).send({ status: true, data: updateData })
 

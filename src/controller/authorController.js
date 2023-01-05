@@ -1,19 +1,20 @@
 const authorModel = require('../model/authorModel')
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt');
+
 
 
 let nameRegex = /^[A-Za-z ]{3,30}$/
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 let Regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@#$!%*?&]{8,13}$/
-
+    
+    
 exports.authorCreate = async (req ,res)=>{
   try{
 
   let data  = req.body
   const{fname ,lname ,title , email , password} = data
-if(Object.keys(req.body).length == 0 )return res.status(400).send({status : false , message : "body empty"})
+  if(Object.keys(req.body).length == 0 )return res.status(400).send({status : false , message : "body empty"})
 
   if(!fname)return res.status(400).send({status : false , message : "require fname"})
   if(!lname)return res.status(400).send({status : false , message : "require lname"})
@@ -49,7 +50,7 @@ try{
   if(!email)return res.status(400).send({status : false , message :"email is required"})
   if(!password)return res.status(400).send({status : false , message :"password is required"})
 
-  let checkDetails = await authorModel.findOne({email :email ,password : password})
+  let checkDetails = await authorModel.findOne({email :email ,password:password })
   if(!checkDetails)return res.status(400).send({status : false , message : " email and password invalid"})
 
    const token = jwt.sign({authorId :checkDetails._id } ,"first project " , {expiresIn :'1h'})
