@@ -74,10 +74,6 @@ exports.putApi = async (req, res) => {
     if(!Regex.test(...tags))return res.status(400).send({status : false , message : "provide valid tags"})}
    if(subcategory){
     if(!Regex.test(...subcategory))return res.status(400).send({status : false , message : "provide valid subcategory"})}
-    
-
-    let blogId = await blogModel.findOne({ _id: id }, { isDeleted: true })
-    if (!blogId) return res.status(404).send({ status: false, message: "blogId is not exist" })
 
     const updateData = await blogModel.findOneAndUpdate({_id :id}, {
       $set :{title :title ,body :body},

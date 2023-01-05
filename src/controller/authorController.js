@@ -55,7 +55,7 @@ try{
   if(!checkDetails)return res.status(400).send({status : false , message : " email and password invalid"})
 
    const token = jwt.sign({authorId :checkDetails._id } ,"first project " , {expiresIn :'1h'})
-   res.status(201).send({status :true ,token :token  })
+   res.status(200).send({status :true ,token :token  })
 
 }catch(err){
    res.status(500).send({status :false , message : err.message})

@@ -32,13 +32,14 @@ try{
     if(decodedId != authorId)return res.status(403).send({status :false ,message:"unauthorization"})
     next()
   }
-  if(blogId){
 
-    let findData = await blogModel.findOne({_id : blogId , isDeleted : false})
+  if(blogId){
+    
+  let findData = await blogModel.findOne({_id : blogId , isDeleted : false})
    if(!findData)return res.status(404).send({status : false , message :"blog id is not exist"})
    if(decodedId != findData.authorId)return res.status(403).send({status : false , message :"unauthorization"})
-
    next()
+
   }
   
 }catch(err){
