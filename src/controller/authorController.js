@@ -30,7 +30,8 @@ exports.authorCreate = async (req ,res)=>{
    if(!password.match(Regex))return res.status(400).send({status : false , message : "provide valid password"})
 
   let uniqueEmail = await authorModel.findOne({email : email})
-  if(uniqueEmail)return res.status(400).send({status : false , message : " email already exist"})
+  if(uniqueEmail)return res.status(403).send({status : false , message : " email already exist"})
+  //  forbidden status code 403
 
   const createAuthor = await authorModel.create(data)
   res.status(201).send({status :true, data : createAuthor })
@@ -60,4 +61,5 @@ try{
    res.status(500).send({status :false , message : err.message})
 }
 }
+
 
